@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Vladimir Maximov](https://up.htmlacademy.ru/javascript/29/user/2342349).
-* Наставник: `Александр Соболев`.
+* Наставник: [Максим Калин](https://htmlacademy.ru/profile/id992315).
 
 ---
 
