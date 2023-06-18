@@ -37,3 +37,8 @@ console.log(getNumberFromString('а я томат'));           // NaN
 console.log(getNumberFromString(2023));            // 2023
 console.log(getNumberFromString(-1));             // 1
 console.log(getNumberFromString(1.5));            // 15
+
+const a1 = 1;
+const A2 = 2;
+console.log(a1);
+console.log(A2);
