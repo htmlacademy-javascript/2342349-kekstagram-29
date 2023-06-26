@@ -20,6 +20,7 @@ const getMinutesFromText = (txt) => {
   return parseInt(timeArr[1], 10) + (parseInt(timeArr[0], 10) * 60);
 };
 
+
 const isEnoughTime = (dayStartTxt, dayEndTxt, eventStartTxt, eventDurationMinutes) => {
   const dayStartMinutes = getMinutesFromText(dayStartTxt);
   const dayEndMinutes = getMinutesFromText(dayEndTxt);
