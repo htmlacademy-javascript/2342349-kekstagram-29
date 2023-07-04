@@ -25,7 +25,7 @@ const createComments = (_, index) => ({
 const createPicture = (_, index) => ({
   id: index + 1,
   url: `photos/${index + 1}.jpg`,
-  description: (`_description_text_${getRandomInteger(10000, 100000)}`).repeat(3),
+  description: (`_description_text_${getRandomInteger(10000, 100000)}`),
   likes: getRandomInteger(15, 200),
   comments: Array.from({length: getRandomInteger(0, 30)}, createComments)
 });
