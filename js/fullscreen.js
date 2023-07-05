@@ -1,57 +1,68 @@
 const bodyElement = document.querySelector('body');
 const bigPicture = document.querySelector('.big-picture');
-const cancelButton = document.querySelector('.big-picture__cancel');
+const cancelButton = bigPicture.querySelector('.big-picture__cancel');
 const image = bigPicture.querySelector('.big-picture__img img');
-const socialDiv = bigPicture.querySelector('.social__header');
-const socialCaption = socialDiv.querySelector('.social__caption');
-const likesCount = socialDiv.querySelector('.likes-count');
+const socialCaption = bigPicture.querySelector('.social__caption');
+const likesCount = bigPicture.querySelector('.likes-count');
 const commentsCount = bigPicture.querySelector('.comments-count');
 const comments = bigPicture.querySelector('.social__comments');
 const templateComment = comments.querySelector('.social__comment');
+const loadCommentButton = bigPicture.querySelector('.social__comments-loader');
+
+const COMMENTS_FOR_LOAD = 5;
+let commentLoader;
+
+function createLoadComment(pictureData) {
+  let commentIndex = 0;
+  return function() {
+    const fragment = new DocumentFragment();
+    const newCommentRange = Math.min(commentIndex + COMMENTS_FOR_LOAD, pictureData.comments.length);
+
+    for (let i = commentIndex; i < newCommentRange; i++) {
+      const commentElement = pictureData.comments[i];
+      const comment = templateComment.cloneNode(true);
+      comment.querySelector('img').src = commentElement.avatar;
+      comment.querySelector('img').alt = commentElement.name;
+      comment.querySelector('p').textContent = commentElement.message;
+      fragment.appendChild(comment);
+    }
+    commentIndex = newCommentRange;
+    comments.appendChild(fragment);
+  };
+}
+
+function closeFullScreen() {
+  bodyElement.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+  cancelButton.removeEventListener('click', closeFullScreenHandler);
+  document.removeEventListener('keydown', closeFullScreenHandler);
+  loadCommentButton.removeEventListener('click', commentLoader);
+}
+
+function closeFullScreenHandler(event) {
+  const isEscapeKey = event.type === 'keydown' && event.code === 'Escape';
+  const isClick = event.type === 'click';
+  if (isEscapeKey || isClick) {
+    closeFullScreen();
+  }
+}
 
 function openFullScreen(event, pictureData) {
-  cancelButton.addEventListener('click', closeFullScreen);
-  document.addEventListener('keydown', closeFullScreen);
+  commentLoader = createLoadComment(pictureData);
+  cancelButton.addEventListener('click', closeFullScreenHandler);
+  document.addEventListener('keydown', closeFullScreenHandler);
+  loadCommentButton.addEventListener('click', commentLoader);
 
+  comments.innerHTML = '';
+  commentLoader();
   image.src = pictureData.url;
   image.alt = pictureData.description;
   socialCaption.textContent = pictureData.description;
   likesCount.textContent = pictureData.likes;
   commentsCount.textContent = `${pictureData.comments.length}`;
 
-  comments.innerHTML = '';
-  const fragment = new DocumentFragment();
-  for (const commentElement of pictureData.comments) {
-    const comment = templateComment.cloneNode(true);
-    const commentPicture = comment.querySelector('img');
-    const commentText = comment.querySelector('p');
-
-    commentPicture.src = commentElement.avatar;
-    commentPicture.alt = commentElement.name;
-    commentText.textContent = commentElement.message;
-
-    fragment.appendChild(comment);
-  }
-  comments.appendChild(fragment);
-
   bodyElement.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
-  // temp
-  bigPicture.querySelector('.social__comment-count').classList.add('hidden');
-  bigPicture.querySelector('.social__comments-loader').classList.add('hidden');
 }
 
-function closeFullScreen(event) {
-  const isEscapeKey = event.type === 'keydown' && event.key === 'Escape';
-  const isClick = event.type === 'click';
-
-  if (isEscapeKey || isClick) {
-    bodyElement.classList.remove('modal-open');
-    bigPicture.classList.add('hidden');
-
-    cancelButton.removeEventListener('click', closeFullScreen);
-    document.removeEventListener('keydown', closeFullScreen);
-  }
-}
-
-export {openFullScreen};
+export { openFullScreen };
