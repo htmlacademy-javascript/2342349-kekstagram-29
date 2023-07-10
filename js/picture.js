@@ -18,7 +18,6 @@ const drawPicture = (pictureData) => {
     pictureListFragment.appendChild(pictureElement);
     pictureElement.addEventListener('click', () => openFullScreenClickHandler(picture));
   });
-
   pictureList.appendChild(pictureListFragment);
 };
 
