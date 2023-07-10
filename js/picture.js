@@ -1,3 +1,5 @@
+import {openFullScreen} from './fullscreen.js';
+
 const drawPicture = (pictureData) => {
 
   const pictureTemplate = document.querySelector('#picture')
@@ -9,12 +11,12 @@ const drawPicture = (pictureData) => {
 
   pictureData.forEach((picture) => {
     const pictureElement = pictureTemplate.cloneNode(true);
-    pictureElement.href = picture.url;
     pictureElement.querySelector('.picture__img').src = picture.url;
     pictureElement.querySelector('.picture__img').alt = picture.description;
     pictureElement.querySelector('.picture__info').querySelector('.picture__likes').textContent = picture.likes;
     pictureElement.querySelector('.picture__info').querySelector('.picture__comments').textContent = `${picture.comments.length}`;
     pictureListFragment.appendChild(pictureElement);
+    pictureElement.addEventListener('click', (event) => openFullScreen(event, picture));
   });
 
   pictureList.appendChild(pictureListFragment);
