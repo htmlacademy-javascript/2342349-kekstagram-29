@@ -1,4 +1,4 @@
-import {openFullScreen} from './fullscreen.js';
+import {openFullScreenClickHandler} from './fullscreen.js';
 
 const drawPicture = (pictureData) => {
 
@@ -16,9 +16,8 @@ const drawPicture = (pictureData) => {
     pictureElement.querySelector('.picture__info').querySelector('.picture__likes').textContent = picture.likes;
     pictureElement.querySelector('.picture__info').querySelector('.picture__comments').textContent = `${picture.comments.length}`;
     pictureListFragment.appendChild(pictureElement);
-    pictureElement.addEventListener('click', (event) => openFullScreen(event, picture));
+    pictureElement.addEventListener('click', () => openFullScreenClickHandler(picture));
   });
-
   pictureList.appendChild(pictureListFragment);
 };
 
