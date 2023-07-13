@@ -5,11 +5,15 @@ const imageUploadOverlay = document.querySelector('.img-upload__overlay');
 const imageUploadForm = document.querySelector('.img-upload__form');
 const imageUploadFormTag = document.querySelector('.text__hashtags');
 const imageUploadFormText = document.querySelector('.text__description');
+const imageUploadPreview = document.querySelector('.img-upload__preview img');
 
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_LENGTH = 20;
 const MAX_HASHTAG_COUNT = 5;
 const pristine = new Pristine(imageUploadForm);
+const fileReader = new FileReader();
+fileReader.onload = imageFileLoadHandler;
+
 pristine.addValidator(imageUploadFormText, (text) =>
   text.length <= MAX_COMMENT_LENGTH, 'The comment is too long');
 pristine.addValidator(imageUploadFormTag, (value) =>
@@ -42,6 +46,13 @@ function initialize() {
 }
 
 function imageUploadInputChangeHandler() {
+  if (imageUploadInput.files.length > 0) {
+    fileReader.readAsDataURL(imageUploadInput.files[0]);
+  }
+}
+
+function imageFileLoadHandler(event) {
+  imageUploadPreview.src = event.target.result;
   openFormEditImage();
 }
 
@@ -69,11 +80,9 @@ function submitFormEditHandler(event) {
 }
 
 function openFormEditImage() {
-  console.log(imageUploadInput.files[0].name);
   document.addEventListener('keydown', closeFormImageEscKeyHandler);
   imageUploadCancel.addEventListener('click', closeFormImageClickHandler);
   imageUploadForm.addEventListener('submit', submitFormEditHandler);
-
 
   body.classList.add('modal-open');
   imageUploadOverlay.classList.remove('hidden');
