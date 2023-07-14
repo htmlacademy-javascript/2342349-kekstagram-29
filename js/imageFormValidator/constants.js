@@ -1,5 +1,8 @@
 export const IMAGE_UPLOAD_METHOD = 'post';
 export const IMAGE_UPLOAD_URL = 'https://29.javascript.pages.academy/kekstagram';
+export const IMAGE_UPLOAD_ENCTYPE = 'multipart/form-data';
+export const IMAGE_UPLOAD_TAG_REQUIRED = true;
+export const IMAGE_UPLOAD_TEXT_REQUIRED = true;
 export const COMMENT_LENGTH_MAX = 140;
 export const HASHTAG_LENGTH_MAX = 20;
 export const HASHTAG_COUNT_MAX = 5;
