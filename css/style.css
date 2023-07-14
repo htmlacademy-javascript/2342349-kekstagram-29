@@ -1408,3 +1408,23 @@ main {
 .hidden {
   display: none;
 }
+
+.has-error input,
+.has-error textarea {
+  border-color: red;
+  background-color: #cbb0b0;
+  margin-bottom: 0;
+}
+
+.has-success input,
+.has-success textarea {
+  border-color: green;
+  background-color: #cceac0;
+}
+
+.error-message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+}
