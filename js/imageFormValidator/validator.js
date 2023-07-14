@@ -2,7 +2,9 @@ import {
   body,
   effectLevelRadioButtons,
   effectLevelValueElement,
-  imageUploadCancel, imageUploadEffectLevel,
+  effectsPreviewElements,
+  imageUploadCancel,
+  imageUploadEffectLevel,
   imageUploadForm,
   imageUploadFormTag,
   imageUploadFormText,
@@ -14,10 +16,10 @@ import {
   imageUploadScaleControlValue
 } from './domElements.js';
 import {
+  applyPristineValidationRules,
   noUiSliderConfig,
   noUiSliderEffectLevelConfig,
-  pristineConfig,
-  applyPristineValidationRules
+  pristineConfig
 } from './validatorRules.js';
 import {
   IMAGE_UPLOAD_ENCTYPE,
@@ -125,6 +127,9 @@ function imageUploadInputChangeHandler() {
 
 function imageFileLoadHandler(event) {
   imageUploadPreview.src = event.target.result;
+  effectsPreviewElements.forEach((element) => {
+    element.style.backgroundImage = `url("${imageUploadPreview.src}")`;
+  });
   openFormEditImage();
 }
 
