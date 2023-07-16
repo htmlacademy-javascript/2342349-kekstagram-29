@@ -1,24 +1,22 @@
-const bodyElement = document.querySelector('body');
-const bigPicture = document.querySelector('.big-picture');
-const cancelButton = bigPicture.querySelector('.big-picture__cancel');
-const image = bigPicture.querySelector('.big-picture__img img');
-const socialCaption = bigPicture.querySelector('.social__caption');
-const likesCount = bigPicture.querySelector('.likes-count');
-const commentsCount = bigPicture.querySelector('.social__comment-count');
-const comments = bigPicture.querySelector('.social__comments');
-const templateComment = comments.querySelector('.social__comment');
-const loadCommentButton = bigPicture.querySelector('.social__comments-loader');
+import {
+  bigPicture,
+  bodyElement,
+  cancelButton,
+  comments,
+  commentsCount,
+  image,
+  likesCount,
+  loadCommentButton,
+  socialCaption,
+  templateComment
+} from './domElements.js';
+import {COMMENTS_FOR_LOAD} from './constants.js';
 
-const COMMENTS_FOR_LOAD = 5;
 let commentLoader;
-
-function openFullScreenClickHandler(pictureData) {
-  openFullScreen(pictureData);
-}
 
 function createLoadComment(pictureData) {
   let commentIndex = 0;
-  return function() {
+  return function () {
     const fragment = new DocumentFragment();
     const newCommentRange = Math.min(commentIndex + COMMENTS_FOR_LOAD, pictureData.comments.length);
 
@@ -64,7 +62,7 @@ function closeFullScreen() {
   loadCommentButton.removeEventListener('click', commentLoader);
 }
 
-function openFullScreen(pictureData) {
+export function openFullScreen(pictureData) {
   commentLoader = createLoadComment(pictureData);
   cancelButton.addEventListener('click', closeFullScreenClickHandler);
   document.addEventListener('keydown', closeFullScreenEscKeyHandler);
@@ -80,5 +78,3 @@ function openFullScreen(pictureData) {
   bodyElement.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 }
-
-export { openFullScreenClickHandler };
