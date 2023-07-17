@@ -1,5 +1,5 @@
-import {effectLevelSliderElement, imageUploadFormTag, imageUploadFormText} from './domElements.js';
 import {COMMENT_LENGTH_MAX, HASHTAG_COUNT_MAX, HASHTAG_LENGTH_MAX} from './constants.js';
+import {effectLevelSliderElement, imageUploadFormTag, imageUploadFormText} from './domElements.js';
 import {splitTextWithSpace} from './utils.js';
 
 export const noUiSliderConfig = noUiSlider.create(effectLevelSliderElement, {
@@ -45,10 +45,12 @@ export function applyPristineValidationRules(pristine) {
 
   pristine.addValidator(imageUploadFormTag, (value) =>
     splitTextWithSpace(value).every((hashtag) =>
-      hashtag.length <= HASHTAG_LENGTH_MAX), 'Hashtag length should not exceed 20 characters', 4, true);
+      hashtag.length <=
+      HASHTAG_LENGTH_MAX), `Hashtag length should not exceed ${HASHTAG_LENGTH_MAX} characters`, 4, true);
 
   pristine.addValidator(imageUploadFormTag, (value) =>
-    splitTextWithSpace(value).length <= HASHTAG_COUNT_MAX, 'Number of hashtags should not exceed 5', 5, true);
+    splitTextWithSpace(value).length <=
+    HASHTAG_COUNT_MAX, `Number of hashtags should not exceed ${HASHTAG_COUNT_MAX}`, 5, true);
 
   pristine.addValidator(imageUploadFormTag, (value) => {
     const lowercaseHashtags = splitTextWithSpace(value).map((hashtag) => hashtag.toLowerCase());

@@ -1,4 +1,16 @@
 import {
+  IMAGE_UPLOAD_ENCTYPE,
+  IMAGE_UPLOAD_METHOD,
+  IMAGE_UPLOAD_TAG_REQUIRED,
+  IMAGE_UPLOAD_TEXT_REQUIRED,
+  IMAGE_UPLOAD_URL,
+  NO_UI_SLIDER_RADIO_BUTTON_RESET,
+  SCALE_CONTROL_DEFAULT,
+  SCALE_CONTROL_VALUE_MAX,
+  SCALE_CONTROL_VALUE_MIN,
+  SCALE_CONTROL_VALUE_STEP
+} from './constants.js';
+import {
   body,
   effectLevelRadioButtons,
   effectLevelValueElement,
@@ -21,20 +33,10 @@ import {
   noUiSliderEffectLevelConfig,
   pristineConfig
 } from './validatorRules.js';
-import {
-  IMAGE_UPLOAD_ENCTYPE,
-  IMAGE_UPLOAD_METHOD,
-  IMAGE_UPLOAD_TAG_REQUIRED,
-  IMAGE_UPLOAD_TEXT_REQUIRED,
-  IMAGE_UPLOAD_URL,
-  SCALE_CONTROL_VALUE_MAX,
-  SCALE_CONTROL_VALUE_MIN,
-  SCALE_CONTROL_VALUE_STEP
-} from './constants.js';
 import {fileReader} from './utils.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
-let scaleControlValueCurrent = 100;
+let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
 
 function changeEffectLevelRadioButton(radioButton) {
   imageUploadPreview.style.filter = noUiSliderEffectLevelConfig.none.filter(0);
@@ -121,8 +123,8 @@ function closeFormEditImage() {
   body.classList.remove('modal-open');
   imageUploadOverlay.classList.add('hidden');
   pristine.reset();
-  setScaleControl(100);
-  changeEffectLevelRadioButton({value: 'none'});
+  setScaleControl(SCALE_CONTROL_DEFAULT);
+  changeEffectLevelRadioButton(NO_UI_SLIDER_RADIO_BUTTON_RESET);
 }
 
 function imageUploadInputChangeHandler() {

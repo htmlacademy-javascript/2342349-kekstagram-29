@@ -1,3 +1,4 @@
+import {COMMENTS_FOR_LOAD} from './constants.js';
 import {
   bigPicture,
   bodyElement,
@@ -10,7 +11,6 @@ import {
   socialCaption,
   templateComment
 } from './domElements.js';
-import {COMMENTS_FOR_LOAD} from './constants.js';
 
 let commentLoader;
 
