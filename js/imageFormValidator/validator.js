@@ -58,22 +58,6 @@ function effectLevelRadioButtonHandler() {
   changeEffectLevelRadioButton(this);
 }
 
-function closeFormEditImage() {
-  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
-  imageUploadCancel.removeEventListener('click', closeFormImageClickHandler);
-  imageUploadForm.removeEventListener('submit', submitFormEditHandler);
-  imageUploadScaleControlSmaller.removeEventListener('click', scaleControlSmallerClickHandler);
-  imageUploadScaleControlBigger.removeEventListener('click', scaleControlBiggerClickHandler);
-  effectLevelRadioButtons.forEach((radioButton) => {
-    radioButton.removeEventListener('change', effectLevelRadioButtonHandler);
-  });
-
-  imageUploadInput.value = '';
-  body.classList.remove('modal-open');
-  imageUploadOverlay.classList.add('hidden');
-  pristine.reset();
-}
-
 function closeFormImageClickHandler() {
   closeFormEditImage();
 }
@@ -87,22 +71,26 @@ function closeFormImageEscKeyHandler(event) {
   }
 }
 
-function changeScaleControl(step) {
-  const scaleControlValueUpdated = scaleControlValueCurrent + step;
-  if (scaleControlValueUpdated < SCALE_CONTROL_VALUE_MIN || scaleControlValueUpdated > SCALE_CONTROL_VALUE_MAX) {
-    return;
-  }
-  scaleControlValueCurrent = scaleControlValueUpdated;
+function setScaleControl(value) {
+  scaleControlValueCurrent = value;
   imageUploadScaleControlValue.value = `${scaleControlValueCurrent}%`;
   imageUploadPreview.style.transform = `scale(${scaleControlValueCurrent / 100})`;
 }
 
+function calculateScaleControl(step) {
+  const scaleControlValueUpdated = scaleControlValueCurrent + step;
+  if (scaleControlValueUpdated < SCALE_CONTROL_VALUE_MIN || scaleControlValueUpdated > SCALE_CONTROL_VALUE_MAX) {
+    return;
+  }
+  setScaleControl(scaleControlValueUpdated);
+}
+
 function scaleControlSmallerClickHandler() {
-  changeScaleControl(-SCALE_CONTROL_VALUE_STEP);
+  calculateScaleControl(-SCALE_CONTROL_VALUE_STEP);
 }
 
 function scaleControlBiggerClickHandler() {
-  changeScaleControl(SCALE_CONTROL_VALUE_STEP);
+  calculateScaleControl(SCALE_CONTROL_VALUE_STEP);
 }
 
 function openFormEditImage() {
@@ -117,6 +105,24 @@ function openFormEditImage() {
 
   body.classList.add('modal-open');
   imageUploadOverlay.classList.remove('hidden');
+}
+
+function closeFormEditImage() {
+  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
+  imageUploadCancel.removeEventListener('click', closeFormImageClickHandler);
+  imageUploadForm.removeEventListener('submit', submitFormEditHandler);
+  imageUploadScaleControlSmaller.removeEventListener('click', scaleControlSmallerClickHandler);
+  imageUploadScaleControlBigger.removeEventListener('click', scaleControlBiggerClickHandler);
+  effectLevelRadioButtons.forEach((radioButton) => {
+    radioButton.removeEventListener('change', effectLevelRadioButtonHandler);
+  });
+
+  imageUploadInput.value = '';
+  body.classList.remove('modal-open');
+  imageUploadOverlay.classList.add('hidden');
+  pristine.reset();
+  setScaleControl(100);
+  changeEffectLevelRadioButton({value: 'none'});
 }
 
 function imageUploadInputChangeHandler() {
