@@ -1,7 +1,7 @@
 import {initializeFullScreenViewer} from '../fullscreenViewer';
 import {pictureList, pictureTemplate} from './domElements.js';
 
-export const drawPicture = (pictureData) => {
+const drawPicture = (pictureData) => {
   const pictureListFragment = new DocumentFragment();
 
   pictureData.forEach((picture) => {
@@ -20,3 +20,5 @@ export const drawPicture = (pictureData) => {
   });
   pictureList.appendChild(pictureListFragment);
 };
+
+export {drawPicture};

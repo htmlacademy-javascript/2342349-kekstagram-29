@@ -1,9 +1,6 @@
 import {
-  IMAGE_UPLOAD_ENCTYPE,
-  IMAGE_UPLOAD_METHOD,
   IMAGE_UPLOAD_TAG_REQUIRED,
   IMAGE_UPLOAD_TEXT_REQUIRED,
-  IMAGE_UPLOAD_URL,
   NO_UI_SLIDER_RADIO_BUTTON_RESET,
   SCALE_CONTROL_DEFAULT,
   SCALE_CONTROL_VALUE_MAX,
@@ -34,7 +31,8 @@ import {
   pristineConfig
 } from './validatorRules.js';
 import {fileReader} from './utils.js';
-import {sendData} from '../fetch.js';
+import {fetchData} from '../http.js';
+import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
 let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
@@ -220,7 +218,7 @@ function hideErrorForm() {
 function validateAndSend() {
   if (pristine.validate()) {
     const formData = new FormData(imageUploadForm);
-    sendData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
+    fetchData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
       .then(() => showSuccessForm())
       .catch(() => showErrorForm());
   }

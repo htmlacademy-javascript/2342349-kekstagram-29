@@ -1,5 +1,7 @@
 export const fileReader = new FileReader();
 
-export function splitTextWithSpace(value) {
+function splitTextWithSpace(value) {
   return value.split(/\s+/);
 }
+
+export {splitTextWithSpace};

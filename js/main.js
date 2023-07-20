@@ -1,11 +1,13 @@
+import {IMAGE_DOWNLOAD_URL} from './constants.js';
 import {initializePictureViewer} from './pictureViewer';
 import {initializeImageFormValidator} from './imageFormValidator';
-import {loadData} from './fetch.js';
+import {fetchData} from './http.js';
+import {initializeGlobalErrorForm, showGlobalErrorForm} from './globalErrorForm.js';
 
-const IMAGE_DOWNLOAD_URL = 'https://29.javascript.pages.academy/kekstagram/data';
-loadData(IMAGE_DOWNLOAD_URL)
+initializeGlobalErrorForm();
+
+fetchData(IMAGE_DOWNLOAD_URL)
   .then((pictureData) => initializePictureViewer(pictureData))
-  .catch()
-;
+  .catch((error) => showGlobalErrorForm(error.message));
 
 initializeImageFormValidator();

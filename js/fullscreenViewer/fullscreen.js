@@ -62,7 +62,7 @@ function closeFullScreen() {
   loadCommentButton.removeEventListener('click', commentLoader);
 }
 
-export function openFullScreen(pictureData) {
+function openFullScreen(pictureData) {
   commentLoader = createLoadComment(pictureData);
   cancelButton.addEventListener('click', closeFullScreenClickHandler);
   document.addEventListener('keydown', closeFullScreenEscKeyHandler);
@@ -78,3 +78,5 @@ export function openFullScreen(pictureData) {
   bodyElement.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 }
+
+export {openFullScreen};
