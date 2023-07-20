@@ -1,8 +1,8 @@
-import {IMAGE_DOWNLOAD_URL} from './constants.js';
+import {IMAGE_DOWNLOAD_URL} from './constants/constants.js';
 import {initializePictureViewer} from './pictureViewer';
 import {initializeImageFormValidator} from './imageFormValidator';
-import {fetchData} from './http.js';
-import {initializeGlobalErrorForm, showGlobalErrorForm} from './globalErrorForm.js';
+import {fetchData} from './utils/http.js';
+import {initializeGlobalErrorForm, showGlobalErrorForm} from './errors/globalErrorForm.js';
 
 initializeGlobalErrorForm();
 

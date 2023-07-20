@@ -31,8 +31,8 @@ import {
   pristineConfig
 } from './validatorRules.js';
 import {fileReader} from './utils.js';
-import {fetchData} from '../http.js';
-import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants.js';
+import {fetchData} from '../utils/http.js';
+import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
 let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
@@ -40,7 +40,7 @@ let successForm;
 let successFormInner;
 let successFormButton;
 let errorForm;
-let errorFormInner
+let errorFormInner;
 let errorFormButton;
 
 function changeEffectLevelRadioButton(radioButton) {
