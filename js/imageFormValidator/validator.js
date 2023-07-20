@@ -28,7 +28,7 @@ import {
   imageUploadScaleControlValue
 } from './domElements.js';
 import {
-  applyPristineValidationRules,
+  preparePristineValidationRules,
   noUiSliderConfig,
   noUiSliderEffectLevelConfig,
   pristineConfig
@@ -39,8 +39,10 @@ import {sendData} from '../fetch.js';
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
 let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
 let successForm;
+let successFormInner;
 let successFormButton;
 let errorForm;
+let errorFormInner
 let errorFormButton;
 
 function changeEffectLevelRadioButton(radioButton) {
@@ -158,7 +160,21 @@ function successFormEscKeyHandler(event) {
   }
 }
 
+function successFormClickOutsideHandler(event) {
+  if (successFormInner.contains(event.target)) {
+    return;
+  }
+  hideSuccessForm();
+}
+
 function errorFormClickHandler() {
+  hideErrorForm();
+}
+
+function errorFormClickOutsideHandler(event) {
+  if (errorFormInner.contains(event.target)) {
+    return;
+  }
   hideErrorForm();
 }
 
@@ -169,43 +185,44 @@ function errorFormEscKeyHandler(event) {
 }
 
 function showSuccessForm() {
+  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
   successForm.classList.remove('hidden');
   document.addEventListener('keydown', successFormEscKeyHandler);
   successFormButton.addEventListener('click', successFormClickHandler);
-  //todo
-  // successFormButton.addEventListener('click', successFormButtonClickHandler);
+  document.addEventListener('click', successFormClickOutsideHandler);
 }
 
 function hideSuccessForm() {
+  document.addEventListener('keydown', closeFormImageEscKeyHandler);
   successForm.classList.add('hidden');
   document.removeEventListener('keydown', successFormEscKeyHandler);
   successFormButton.removeEventListener('click', successFormClickHandler);
+  document.removeEventListener('click', successFormClickOutsideHandler);
   closeFormEditImage();
 }
 
 function showErrorForm() {
+  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
   errorForm.classList.remove('hidden');
   document.addEventListener('keydown', errorFormEscKeyHandler);
   errorFormButton.addEventListener('click', errorFormClickHandler);
-  //todo
-  // successFormButton.addEventListener('click', successFormButtonClickHandler);
+  document.addEventListener('click', errorFormClickOutsideHandler);
 }
 
 function hideErrorForm() {
+  document.addEventListener('keydown', closeFormImageEscKeyHandler);
   errorForm.classList.add('hidden');
   document.removeEventListener('keydown', errorFormEscKeyHandler);
   errorFormButton.removeEventListener('click', errorFormClickHandler);
+  document.removeEventListener('click', errorFormClickOutsideHandler);
 }
 
 function validateAndSend() {
   if (pristine.validate()) {
     const formData = new FormData(imageUploadForm);
-
-    sendData(IMAGE_UPLOAD_URL + 1, IMAGE_UPLOAD_METHOD, formData)
-      .then(r => showSuccessForm())
-      .catch(reason => showErrorForm());
-    //todo
-    // event.target.submit();
+    sendData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
+      .then(() => showSuccessForm())
+      .catch(() => showErrorForm());
   }
 }
 
@@ -213,7 +230,6 @@ function submitFormEditHandler(event) {
   event.preventDefault();
   validateAndSend();
 }
-
 
 function prepareHtmlForms() {
   imageUploadForm.method = IMAGE_UPLOAD_METHOD;
@@ -224,32 +240,32 @@ function prepareHtmlForms() {
 }
 
 function prepareSuccessForm() {
-  const successTemplate = document.querySelector('#success')
-    .content.querySelector('.success');
-  successForm = successTemplate.cloneNode(true);
+  successForm = document.querySelector('#success')
+    .content.querySelector('.success')
+    .cloneNode(true);
+  successFormInner = successForm.querySelector('.success__inner');
   successFormButton = successForm.querySelector('.success__button');
   hideSuccessForm();
   document.body.appendChild(successForm);
 }
 
 function prepareErrorForm() {
-  const errorTemplate = document.querySelector('#error')
-    .content.querySelector('.error');
-  errorForm = errorTemplate.cloneNode(true);
-  errorFormButton = errorTemplate.querySelector('.error__button');
+  errorForm = document.querySelector('#error')
+    .content.querySelector('.error')
+    .cloneNode(true);
+  errorFormInner = errorForm.querySelector('.error__inner');
+  errorFormButton = errorForm.querySelector('.error__button');
   hideErrorForm();
   document.body.appendChild(errorForm);
 }
 
-export function initializeValidator() {
-  prepareHtmlForms();
-  applyPristineValidationRules(pristine);
-  prepareSuccessForm();
-  prepareErrorForm();
-
+function prepareImageUpload() {
   imageUploadEffectLevel.classList.add('hidden');
   imageUploadInput.addEventListener('change', imageUploadInputChangeHandler);
   fileReader.onload = imageFileLoadHandler;
+}
+
+function prepareNoUiSlider() {
   noUiSliderConfig.on('update', (values, handle) => {
     const value = values[handle];
     const effectType = document.querySelector('.effects__radio:checked').value;
@@ -257,4 +273,13 @@ export function initializeValidator() {
     effectLevelValueElement.value = value;
     imageUploadPreview.style.filter = filterValue;
   });
+}
+
+export function initializeValidator() {
+  prepareHtmlForms();
+  preparePristineValidationRules(pristine);
+  prepareSuccessForm();
+  prepareErrorForm();
+  prepareImageUpload();
+  prepareNoUiSlider();
 }

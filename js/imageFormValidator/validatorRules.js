@@ -27,7 +27,7 @@ export const pristineConfig = {
   errorTextClass: 'error-message'
 };
 
-export function applyPristineValidationRules(pristine) {
+export function preparePristineValidationRules(pristine) {
   pristine.addValidator(imageUploadFormText, (text) =>
     text.length <= COMMENT_LENGTH_MAX, 'The comment is too long');
 

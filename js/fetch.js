@@ -6,12 +6,6 @@ async function sendData(server, method, formData) {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  const data = await response.json();
-  console.log('SEND');
-  console.log(data);
-
-  // } catch (error) {
-  //   console.error('Error:', error);
 }
 
 async function loadData(server) {
