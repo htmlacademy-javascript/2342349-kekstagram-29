@@ -1,7 +1,8 @@
-import createPicture from './data.js';
 import {initializePictureViewer} from './pictureViewer';
 import {initializeImageFormValidator} from './imageFormValidator';
+import {loadData} from './fetch.js';
 
-const pictureArray = Array.from({length: 25}, createPicture);
-initializePictureViewer(pictureArray);
+const IMAGE_DOWNLOAD_URL = 'https://29.javascript.pages.academy/kekstagram/data';
+loadData(IMAGE_DOWNLOAD_URL).then((pictureData) => initializePictureViewer(pictureData));
+
 initializeImageFormValidator();
