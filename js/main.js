@@ -9,5 +9,4 @@ initializeGlobalErrorForm();
 fetchData(IMAGE_DOWNLOAD_URL)
   .then((pictureData) => initializePictureViewer(pictureData))
   .catch((error) => showGlobalErrorForm(error.message));
-
 initializeImageFormValidator();
