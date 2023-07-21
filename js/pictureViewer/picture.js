@@ -1,9 +1,24 @@
 import {initializeFullScreenViewer} from '../fullscreenViewer';
-import {pictureList, pictureTemplate} from './domElements.js';
+import {
+  imgFilters,
+  pictureFilterDefault,
+  pictureFilterDiscussed,
+  pictureFilterRandom,
+  pictureList,
+  pictureTemplate
+} from './domElements.js';
+import {PICTURE_SORT_BY_RANDOM_LIMIT, PICTURE_SORT_FILTER_DELAY} from './constants.js';
+import {debounce} from '../utils/debounce.js';
 
-const drawPicture = (pictureData) => {
+let serverPictureData;
+
+function updatePictureList(pictureData) {
+  const pictureElements = document.querySelectorAll('.pictures .picture');
+  pictureElements.forEach((element) => {
+    element.remove();
+  });
+
   const pictureListFragment = new DocumentFragment();
-
   pictureData.forEach((picture) => {
     const pictureElement = pictureTemplate.cloneNode(true);
 
@@ -19,6 +34,85 @@ const drawPicture = (pictureData) => {
     pictureElement.addEventListener('click', () => initializeFullScreenViewer(picture));
   });
   pictureList.appendChild(pictureListFragment);
-};
+}
 
-export {drawPicture};
+function sortByCommentDesc(pictureData) {
+  return pictureData
+    .slice()
+    .sort((a, b) => {
+      if (a.comments.length === b.comments.length) {
+        return 0;
+      }
+      return (a.comments.length > b.comments.length) ? -1 : 1;
+    });
+}
+
+function sortByRandom(pictureData, limit) {
+  const array = pictureData.slice();
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array.slice(0, limit);
+}
+
+function deselectPictureFilter() {
+  pictureFilterDefault.classList.remove('img-filters__button--active');
+  pictureFilterRandom.classList.remove('img-filters__button--active');
+  pictureFilterDiscussed.classList.remove('img-filters__button--active');
+}
+
+function changePictureSortByComment() {
+  deselectPictureFilter();
+  pictureFilterDiscussed.classList.add('img-filters__button--active');
+  debounce(() => {
+    updatePictureList(sortByCommentDesc(serverPictureData));
+  }, PICTURE_SORT_FILTER_DELAY)();
+}
+
+function changePictureSortByDefault() {
+  deselectPictureFilter();
+  pictureFilterDefault.classList.add('img-filters__button--active');
+  debounce(() => {
+    updatePictureList(serverPictureData);
+  }, PICTURE_SORT_FILTER_DELAY)();
+}
+
+function changePictureSortByRandom() {
+  deselectPictureFilter();
+  pictureFilterRandom.classList.add('img-filters__button--active');
+  debounce(() => {
+    updatePictureList(sortByRandom(serverPictureData, PICTURE_SORT_BY_RANDOM_LIMIT));
+  }, PICTURE_SORT_FILTER_DELAY)();
+}
+
+function activateFilters() {
+  imgFilters.classList.remove('img-filters--inactive');
+}
+
+function pictureFilterDefaultClickHandler() {
+  changePictureSortByDefault();
+}
+
+function pictureFilterRandomClickHandler() {
+  changePictureSortByRandom();
+}
+
+function pictureFilterDiscussedClickHandler() {
+  changePictureSortByComment();
+}
+
+function initializeImageFilters() {
+  pictureFilterDefault.addEventListener('click', pictureFilterDefaultClickHandler);
+  pictureFilterRandom.addEventListener('click', pictureFilterRandomClickHandler);
+  pictureFilterDiscussed.addEventListener('click', pictureFilterDiscussedClickHandler);
+}
+
+function initializePicturesAndFilters(pictureData) {
+  serverPictureData = pictureData;
+  initializeImageFilters();
+  activateFilters();
+  changePictureSortByDefault();
+}
+
+export {initializePicturesAndFilters};

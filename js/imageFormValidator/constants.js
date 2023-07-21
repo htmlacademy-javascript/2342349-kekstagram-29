@@ -1,4 +1,3 @@
-
 export const IMAGE_UPLOAD_TAG_REQUIRED = true;
 export const IMAGE_UPLOAD_TEXT_REQUIRED = true;
 export const COMMENT_LENGTH_MAX = 140;

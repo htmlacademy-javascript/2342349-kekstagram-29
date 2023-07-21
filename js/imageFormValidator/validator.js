@@ -273,7 +273,7 @@ function prepareNoUiSlider() {
   });
 }
 
-export function initializeValidator() {
+function initializeValidator() {
   prepareHtmlForms();
   preparePristineValidationRules(pristine);
   prepareSuccessForm();
@@ -281,3 +281,5 @@ export function initializeValidator() {
   prepareImageUpload();
   prepareNoUiSlider();
 }
+
+export { initializeValidator};
