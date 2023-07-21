@@ -27,7 +27,7 @@ export const pristineConfig = {
   errorTextClass: 'error-message'
 };
 
-export function applyPristineValidationRules(pristine) {
+function preparePristineValidationRules(pristine) {
   pristine.addValidator(imageUploadFormText, (text) =>
     text.length <= COMMENT_LENGTH_MAX, 'The comment is too long');
 
@@ -58,3 +58,5 @@ export function applyPristineValidationRules(pristine) {
     return uniqueHashtags.size === lowercaseHashtags.length;
   }, 'Each hashtag should be unique', 6, true);
 }
+
+export {preparePristineValidationRules};

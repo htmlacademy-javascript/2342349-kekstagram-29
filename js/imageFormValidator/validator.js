@@ -1,9 +1,6 @@
 import {
-  IMAGE_UPLOAD_ENCTYPE,
-  IMAGE_UPLOAD_METHOD,
   IMAGE_UPLOAD_TAG_REQUIRED,
   IMAGE_UPLOAD_TEXT_REQUIRED,
-  IMAGE_UPLOAD_URL,
   NO_UI_SLIDER_RADIO_BUTTON_RESET,
   SCALE_CONTROL_DEFAULT,
   SCALE_CONTROL_VALUE_MAX,
@@ -28,15 +25,23 @@ import {
   imageUploadScaleControlValue
 } from './domElements.js';
 import {
-  applyPristineValidationRules,
+  preparePristineValidationRules,
   noUiSliderConfig,
   noUiSliderEffectLevelConfig,
   pristineConfig
 } from './validatorRules.js';
 import {fileReader} from './utils.js';
+import {fetchData} from '../utils/http.js';
+import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
 let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
+let successForm;
+let successFormInner;
+let successFormButton;
+let errorForm;
+let errorFormInner;
+let errorFormButton;
 
 function changeEffectLevelRadioButton(radioButton) {
   imageUploadPreview.style.filter = noUiSliderEffectLevelConfig.none.filter(0);
@@ -120,6 +125,8 @@ function closeFormEditImage() {
   });
 
   imageUploadInput.value = '';
+  imageUploadFormText.value = '';
+  imageUploadFormTag.value = '';
   body.classList.remove('modal-open');
   imageUploadOverlay.classList.add('hidden');
   pristine.reset();
@@ -141,12 +148,85 @@ function imageFileLoadHandler(event) {
   openFormEditImage();
 }
 
+function successFormClickHandler() {
+  hideSuccessForm();
+}
+
+function successFormEscKeyHandler(event) {
+  if (event.code === 'Escape') {
+    hideSuccessForm();
+  }
+}
+
+function successFormClickOutsideHandler(event) {
+  if (successFormInner.contains(event.target)) {
+    return;
+  }
+  hideSuccessForm();
+}
+
+function errorFormClickHandler() {
+  hideErrorForm();
+}
+
+function errorFormClickOutsideHandler(event) {
+  if (errorFormInner.contains(event.target)) {
+    return;
+  }
+  hideErrorForm();
+}
+
+function errorFormEscKeyHandler(event) {
+  if (event.code === 'Escape') {
+    hideErrorForm();
+  }
+}
+
+function showSuccessForm() {
+  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
+  successForm.classList.remove('hidden');
+  document.addEventListener('keydown', successFormEscKeyHandler);
+  successFormButton.addEventListener('click', successFormClickHandler);
+  document.addEventListener('click', successFormClickOutsideHandler);
+}
+
+function hideSuccessForm() {
+  document.addEventListener('keydown', closeFormImageEscKeyHandler);
+  successForm.classList.add('hidden');
+  document.removeEventListener('keydown', successFormEscKeyHandler);
+  successFormButton.removeEventListener('click', successFormClickHandler);
+  document.removeEventListener('click', successFormClickOutsideHandler);
+  closeFormEditImage();
+}
+
+function showErrorForm() {
+  document.removeEventListener('keydown', closeFormImageEscKeyHandler);
+  errorForm.classList.remove('hidden');
+  document.addEventListener('keydown', errorFormEscKeyHandler);
+  errorFormButton.addEventListener('click', errorFormClickHandler);
+  document.addEventListener('click', errorFormClickOutsideHandler);
+}
+
+function hideErrorForm() {
+  document.addEventListener('keydown', closeFormImageEscKeyHandler);
+  errorForm.classList.add('hidden');
+  document.removeEventListener('keydown', errorFormEscKeyHandler);
+  errorFormButton.removeEventListener('click', errorFormClickHandler);
+  document.removeEventListener('click', errorFormClickOutsideHandler);
+}
+
+function validateAndSend() {
+  if (pristine.validate()) {
+    const formData = new FormData(imageUploadForm);
+    fetchData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
+      .then(() => showSuccessForm())
+      .catch(() => showErrorForm());
+  }
+}
+
 function submitFormEditHandler(event) {
   event.preventDefault();
-  if (pristine.validate()) {
-    //todo
-    //event.target.submit();
-  }
+  validateAndSend();
 }
 
 function prepareHtmlForms() {
@@ -157,13 +237,33 @@ function prepareHtmlForms() {
   imageUploadFormText.required = IMAGE_UPLOAD_TEXT_REQUIRED;
 }
 
-export function initializeValidator() {
-  prepareHtmlForms();
-  applyPristineValidationRules(pristine);
+function prepareSuccessForm() {
+  successForm = document.querySelector('#success')
+    .content.querySelector('.success')
+    .cloneNode(true);
+  successFormInner = successForm.querySelector('.success__inner');
+  successFormButton = successForm.querySelector('.success__button');
+  hideSuccessForm();
+  document.body.appendChild(successForm);
+}
 
+function prepareErrorForm() {
+  errorForm = document.querySelector('#error')
+    .content.querySelector('.error')
+    .cloneNode(true);
+  errorFormInner = errorForm.querySelector('.error__inner');
+  errorFormButton = errorForm.querySelector('.error__button');
+  hideErrorForm();
+  document.body.appendChild(errorForm);
+}
+
+function prepareImageUpload() {
   imageUploadEffectLevel.classList.add('hidden');
   imageUploadInput.addEventListener('change', imageUploadInputChangeHandler);
   fileReader.onload = imageFileLoadHandler;
+}
+
+function prepareNoUiSlider() {
   noUiSliderConfig.on('update', (values, handle) => {
     const value = values[handle];
     const effectType = document.querySelector('.effects__radio:checked').value;
@@ -172,3 +272,14 @@ export function initializeValidator() {
     imageUploadPreview.style.filter = filterValue;
   });
 }
+
+function initializeValidator() {
+  prepareHtmlForms();
+  preparePristineValidationRules(pristine);
+  prepareSuccessForm();
+  prepareErrorForm();
+  prepareImageUpload();
+  prepareNoUiSlider();
+}
+
+export { initializeValidator};

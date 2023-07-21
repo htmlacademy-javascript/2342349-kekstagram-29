@@ -12,9 +12,9 @@ import {
   templateComment
 } from './domElements.js';
 
-let commentLoader;
+let commentsLoader;
 
-function createLoadComment(pictureData) {
+function createCommentsLoader(pictureData) {
   let commentIndex = 0;
   return function () {
     const fragment = new DocumentFragment();
@@ -32,11 +32,11 @@ function createLoadComment(pictureData) {
     comments.appendChild(fragment);
 
     commentsCount.textContent = `${commentIndex} из ${pictureData.comments.length} комментариев`;
-    commentButtonActivator(pictureData.comments.length, commentIndex);
+    toggleCommentsButton(pictureData.comments.length, commentIndex);
   };
 }
 
-function commentButtonActivator(commentCount, displayedCommentsCount) {
+function toggleCommentsButton(commentCount, displayedCommentsCount) {
   if (commentCount <= COMMENTS_FOR_LOAD || displayedCommentsCount === commentCount) {
     loadCommentButton.classList.add('hidden');
   } else {
@@ -59,17 +59,17 @@ function closeFullScreen() {
   bigPicture.classList.add('hidden');
   cancelButton.removeEventListener('click', closeFullScreenClickHandler);
   document.removeEventListener('keydown', closeFullScreenEscKeyHandler);
-  loadCommentButton.removeEventListener('click', commentLoader);
+  loadCommentButton.removeEventListener('click', commentsLoader);
 }
 
-export function openFullScreen(pictureData) {
-  commentLoader = createLoadComment(pictureData);
+function openFullScreen(pictureData) {
+  commentsLoader = createCommentsLoader(pictureData);
   cancelButton.addEventListener('click', closeFullScreenClickHandler);
   document.addEventListener('keydown', closeFullScreenEscKeyHandler);
-  loadCommentButton.addEventListener('click', commentLoader);
+  loadCommentButton.addEventListener('click', commentsLoader);
 
   comments.innerHTML = '';
-  commentLoader();
+  commentsLoader();
   image.src = pictureData.url;
   image.alt = pictureData.description;
   socialCaption.textContent = pictureData.description;
@@ -78,3 +78,5 @@ export function openFullScreen(pictureData) {
   bodyElement.classList.add('modal-open');
   bigPicture.classList.remove('hidden');
 }
+
+export {openFullScreen};

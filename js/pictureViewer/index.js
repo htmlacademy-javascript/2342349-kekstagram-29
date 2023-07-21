@@ -1,7 +1,7 @@
-import {drawPicture} from './picture.js';
+import {initializePicturesAndFilters} from './picture.js';
 
 function initialize(pictureData) {
-  drawPicture(pictureData);
+  initializePicturesAndFilters(pictureData);
 }
 
 export {initialize as initializePictureViewer};
