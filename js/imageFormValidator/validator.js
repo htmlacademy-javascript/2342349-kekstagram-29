@@ -22,7 +22,7 @@ import {
   imageUploadPreview,
   imageUploadScaleControlBigger,
   imageUploadScaleControlSmaller,
-  imageUploadScaleControlValue
+  imageUploadScaleControlValue, imageUploadSubmitButton
 } from './domElements.js';
 import {
   preparePristineValidationRules,
@@ -112,6 +112,7 @@ function openFormEditImage() {
 
   body.classList.add('modal-open');
   imageUploadOverlay.classList.remove('hidden');
+  imageUploadSubmitButton.disabled = false;
 }
 
 function closeFormEditImage() {
@@ -205,6 +206,7 @@ function showErrorForm() {
   document.addEventListener('keydown', errorFormEscKeyHandler);
   errorFormButton.addEventListener('click', errorFormClickHandler);
   document.addEventListener('click', errorFormClickOutsideHandler);
+  imageUploadSubmitButton.disabled = false;
 }
 
 function hideErrorForm() {
@@ -217,6 +219,7 @@ function hideErrorForm() {
 
 function validateAndSend() {
   if (pristine.validate()) {
+    imageUploadSubmitButton.disabled = true;
     const formData = new FormData(imageUploadForm);
     fetchData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
       .then(() => showSuccessForm())
