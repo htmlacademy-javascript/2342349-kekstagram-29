@@ -23,13 +23,13 @@ import {
   imageUploadScaleControlBigger,
   imageUploadScaleControlSmaller,
   imageUploadScaleControlValue, imageUploadSubmitButton
-} from './domElements.js';
+} from './dom-elements.js';
 import {
   preparePristineValidationRules,
   noUiSliderConfig,
   noUiSliderEffectLevelConfig,
   pristineConfig
-} from './validatorRules.js';
+} from './validator-rules.js';
 import {fileReader} from './utils.js';
 import {fetchData} from '../utils/http.js';
 import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
@@ -80,7 +80,7 @@ function closeFormImageEscKeyHandler(event) {
 
 function setScaleControl(value) {
   scaleControlValueCurrent = value;
-  imageUploadScaleControlValue.value = `${scaleControlValueCurrent}%`;
+  imageUploadScaleControlValue.setAttribute('value', `${scaleControlValueCurrent}%`);
   imageUploadPreview.style.transform = `scale(${scaleControlValueCurrent / 100})`;
 }
 
@@ -146,6 +146,12 @@ function imageFileLoadHandler(event) {
   effectsPreviewElements.forEach((element) => {
     element.style.backgroundImage = `url("${imageUploadPreview.src}")`;
   });
+  //todo blob
+  // const url = URL.createObjectURL(new Blob([event.target.result]));
+  // imageUploadPreview.src = url;
+  // effectsPreviewElements.forEach((element) => {
+  //   element.style.backgroundImage = `url("${url}")`;
+  // });
   openFormEditImage();
 }
 

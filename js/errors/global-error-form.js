@@ -40,7 +40,10 @@ function initialize() {
     .content.querySelector('.error')
     .cloneNode(true);
   globalErrorFormInner = globalErrorForm.querySelector('.error__inner');
+  globalErrorFormInner.classList.replace('error__inner', 'global_error__button');
+
   globalErrorFormButton = globalErrorForm.querySelector('.error__button');
+  globalErrorFormButton.classList.replace('error__button', 'global_error__button');
 
   globalErrorFormMessage = document.createElement('p');
   globalErrorFormMessage.classList.add('error__message');

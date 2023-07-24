@@ -1,5 +1,5 @@
-export const IMAGE_UPLOAD_TAG_REQUIRED = true;
-export const IMAGE_UPLOAD_TEXT_REQUIRED = true;
+export const IMAGE_UPLOAD_TAG_REQUIRED = false;
+export const IMAGE_UPLOAD_TEXT_REQUIRED = false;
 export const COMMENT_LENGTH_MAX = 140;
 export const HASHTAG_LENGTH_MAX = 20;
 export const HASHTAG_COUNT_MAX = 5;

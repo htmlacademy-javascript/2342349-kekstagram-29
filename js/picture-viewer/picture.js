@@ -1,4 +1,4 @@
-import {initializeFullScreenViewer} from '../fullscreenViewer';
+import {initializeFullScreenViewer} from '../fullscreen-viewer/index.js';
 import {
   imgFilters,
   pictureFilterDefault,
@@ -6,7 +6,7 @@ import {
   pictureFilterRandom,
   pictureList,
   pictureTemplate
-} from './domElements.js';
+} from './dom-elements.js';
 import {PICTURE_SORT_BY_RANDOM_LIMIT, PICTURE_SORT_FILTER_DELAY} from './constants.js';
 import {debounce} from '../utils/debounce.js';
 
