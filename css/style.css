@@ -1214,6 +1214,7 @@ main {
 }
 
 .error__inner,
+.global_error__inner,
 .success__inner {
   position: relative;
   width: 600px;
@@ -1275,6 +1276,7 @@ main {
 }
 
 .error__button,
+.global_error__button,
 .success__button {
   padding: 5px 10px;
 

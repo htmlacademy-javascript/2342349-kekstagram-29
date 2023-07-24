@@ -32,16 +32,13 @@ function preparePristineValidationRules(pristine) {
   pristine.addValidator(imageUploadFormText, (text) =>
     text.length <= COMMENT_LENGTH_MAX, 'The comment is too long');
 
-  // pristine.addValidator(imageUploadFormTag, (value) =>
-  //   value.trim() === '', 'Tag field cannot be empty', 0, true);
-
   pristine.addValidator(imageUploadFormTag, (value) =>
     value.trim() === '' || splitTextWithSpace(value).every((hashtag) =>
       hashtag[0] === '#'), 'All hashtags must start with #', 1, true);
 
   pristine.addValidator(imageUploadFormTag, (value) =>
     value.trim() === '' || splitTextWithSpace(value).every((hashtag) =>
-      /^[#][A-Za-z0-9]+$/.test(hashtag)), 'Hashtags should contain only letters and numbers', 2, true);
+      /^[#][A-Za-z0-9А-Яа-я]+$/.test(hashtag)), 'Hashtags should contain only letters and numbers', 2, true);
 
   pristine.addValidator(imageUploadFormTag, (value) =>
     value.trim() === '' || splitTextWithSpace(value).every((hashtag) =>
