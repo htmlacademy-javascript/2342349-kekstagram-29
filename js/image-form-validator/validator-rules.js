@@ -38,7 +38,7 @@ function preparePristineValidationRules(pristine) {
 
   pristine.addValidator(imageUploadFormTag, (value) =>
     value.trim() === '' || splitTextWithSpace(value).every((hashtag) =>
-      /^[#][A-Za-z0-9А-Яа-я]+$/.test(hashtag)), 'Hashtags should contain only letters and numbers', 2, true);
+      /^#[A-Za-z0-9А-Яа-я]+$/.test(hashtag.toString())), 'Hashtags should contain only letters and numbers', 2, true);
 
   pristine.addValidator(imageUploadFormTag, (value) =>
     value.trim() === '' || splitTextWithSpace(value).every((hashtag) =>
