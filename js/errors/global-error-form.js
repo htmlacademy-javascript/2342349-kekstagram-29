@@ -21,6 +21,7 @@ function globalErrorFormEscKeyHandler(event) {
 }
 
 function showGlobalErrorForm(errorMessage) {
+  createGlobalErrorForm();
   globalErrorFormMessage.textContent = errorMessage;
   globalErrorForm.classList.remove('hidden');
   document.addEventListener('keydown', globalErrorFormEscKeyHandler);
@@ -33,21 +34,31 @@ function hideGlobalErrorForm() {
   document.removeEventListener('keydown', globalErrorFormEscKeyHandler);
   globalErrorFormButton.removeEventListener('click', globalErrorFormClickHandler);
   document.removeEventListener('click', globalErrorFormClickOutsideHandler);
+  deleteGlobalErrorForm();
 }
 
-function initialize() {
+function deleteGlobalErrorForm() {
+  document.body.removeChild(globalErrorForm);
+  globalErrorForm = null;
+  globalErrorFormInner = null;
+  globalErrorFormButton = null;
+  globalErrorFormMessage = null;
+}
+
+function createGlobalErrorForm() {
   globalErrorForm = document.querySelector('#error')
     .content.querySelector('.error')
     .cloneNode(true);
   globalErrorFormInner = globalErrorForm.querySelector('.error__inner');
+  globalErrorFormInner.classList.replace('error__inner', 'global_error__inner');
+
   globalErrorFormButton = globalErrorForm.querySelector('.error__button');
+  globalErrorFormButton.classList.replace('error__button', 'global_error__button');
 
   globalErrorFormMessage = document.createElement('p');
   globalErrorFormMessage.classList.add('error__message');
   globalErrorFormInner.appendChild(globalErrorFormMessage);
-
-  hideGlobalErrorForm();
   document.body.appendChild(globalErrorForm);
 }
 
-export {initialize as initializeGlobalErrorForm, showGlobalErrorForm};
+export {showGlobalErrorForm};
