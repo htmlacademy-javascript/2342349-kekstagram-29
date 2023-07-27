@@ -8,7 +8,7 @@ import {
   SCALE_CONTROL_VALUE_STEP
 } from './constants.js';
 import {
-  body,
+  bodyElement, effectLevelRadioButtonDefault,
   effectLevelRadioButtons,
   effectLevelValueElement,
   effectsPreviewElements,
@@ -22,16 +22,16 @@ import {
   imageUploadPreview,
   imageUploadScaleControlBigger,
   imageUploadScaleControlSmaller,
-  imageUploadScaleControlValue
-} from './domElements.js';
+  imageUploadScaleControlValue,
+  imageUploadSubmitButton
+} from './dom-elements.js';
 import {
-  preparePristineValidationRules,
   noUiSliderConfig,
   noUiSliderEffectLevelConfig,
+  preparePristineValidationRules,
   pristineConfig
-} from './validatorRules.js';
-import {fileReader} from './utils.js';
-import {fetchData} from '../utils/http.js';
+} from './validator-rules.js';
+import {fetchData} from '../api/api.js';
 import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
@@ -80,7 +80,7 @@ function closeFormImageEscKeyHandler(event) {
 
 function setScaleControl(value) {
   scaleControlValueCurrent = value;
-  imageUploadScaleControlValue.value = `${scaleControlValueCurrent}%`;
+  imageUploadScaleControlValue.setAttribute('value', `${scaleControlValueCurrent}%`);
   imageUploadPreview.style.transform = `scale(${scaleControlValueCurrent / 100})`;
 }
 
@@ -110,8 +110,9 @@ function openFormEditImage() {
     radioButton.addEventListener('change', effectLevelRadioButtonHandler);
   });
 
-  body.classList.add('modal-open');
+  bodyElement.classList.add('modal-open');
   imageUploadOverlay.classList.remove('hidden');
+  imageUploadSubmitButton.disabled = false;
 }
 
 function closeFormEditImage() {
@@ -123,11 +124,12 @@ function closeFormEditImage() {
   effectLevelRadioButtons.forEach((radioButton) => {
     radioButton.removeEventListener('change', effectLevelRadioButtonHandler);
   });
+  effectLevelRadioButtonDefault.checked = true;
 
   imageUploadInput.value = '';
   imageUploadFormText.value = '';
   imageUploadFormTag.value = '';
-  body.classList.remove('modal-open');
+  bodyElement.classList.remove('modal-open');
   imageUploadOverlay.classList.add('hidden');
   pristine.reset();
   setScaleControl(SCALE_CONTROL_DEFAULT);
@@ -136,16 +138,13 @@ function closeFormEditImage() {
 
 function imageUploadInputChangeHandler() {
   if (imageUploadInput.files.length > 0) {
-    fileReader.readAsDataURL(imageUploadInput.files[0]);
+    const url = URL.createObjectURL(imageUploadInput.files[0]);
+    imageUploadPreview.src = url;
+    effectsPreviewElements.forEach((element) => {
+      element.style.backgroundImage = `url("${url}")`;
+    });
+    openFormEditImage();
   }
-}
-
-function imageFileLoadHandler(event) {
-  imageUploadPreview.src = event.target.result;
-  effectsPreviewElements.forEach((element) => {
-    element.style.backgroundImage = `url("${imageUploadPreview.src}")`;
-  });
-  openFormEditImage();
 }
 
 function successFormClickHandler() {
@@ -183,11 +182,13 @@ function errorFormEscKeyHandler(event) {
 }
 
 function showSuccessForm() {
+  createSuccessForm();
   document.removeEventListener('keydown', closeFormImageEscKeyHandler);
   successForm.classList.remove('hidden');
   document.addEventListener('keydown', successFormEscKeyHandler);
   successFormButton.addEventListener('click', successFormClickHandler);
   document.addEventListener('click', successFormClickOutsideHandler);
+  closeFormEditImage();
 }
 
 function hideSuccessForm() {
@@ -196,15 +197,17 @@ function hideSuccessForm() {
   document.removeEventListener('keydown', successFormEscKeyHandler);
   successFormButton.removeEventListener('click', successFormClickHandler);
   document.removeEventListener('click', successFormClickOutsideHandler);
-  closeFormEditImage();
+  deleteSuccessForm();
 }
 
 function showErrorForm() {
+  createErrorForm();
   document.removeEventListener('keydown', closeFormImageEscKeyHandler);
   errorForm.classList.remove('hidden');
   document.addEventListener('keydown', errorFormEscKeyHandler);
   errorFormButton.addEventListener('click', errorFormClickHandler);
   document.addEventListener('click', errorFormClickOutsideHandler);
+  imageUploadSubmitButton.disabled = false;
 }
 
 function hideErrorForm() {
@@ -213,10 +216,12 @@ function hideErrorForm() {
   document.removeEventListener('keydown', errorFormEscKeyHandler);
   errorFormButton.removeEventListener('click', errorFormClickHandler);
   document.removeEventListener('click', errorFormClickOutsideHandler);
+  deleteErrorForm();
 }
 
 function validateAndSend() {
   if (pristine.validate()) {
+    imageUploadSubmitButton.disabled = true;
     const formData = new FormData(imageUploadForm);
     fetchData(IMAGE_UPLOAD_URL, IMAGE_UPLOAD_METHOD, formData)
       .then(() => showSuccessForm())
@@ -237,30 +242,41 @@ function prepareHtmlForms() {
   imageUploadFormText.required = IMAGE_UPLOAD_TEXT_REQUIRED;
 }
 
-function prepareSuccessForm() {
+function deleteSuccessForm() {
+  document.body.removeChild(successForm);
+  errorForm = null;
+  errorFormInner = null;
+  errorFormButton = null;
+}
+
+function deleteErrorForm() {
+  document.body.removeChild(errorForm);
+  successForm = null;
+  successFormInner = null;
+  successFormButton = null;
+}
+
+function createSuccessForm() {
   successForm = document.querySelector('#success')
     .content.querySelector('.success')
     .cloneNode(true);
   successFormInner = successForm.querySelector('.success__inner');
   successFormButton = successForm.querySelector('.success__button');
-  hideSuccessForm();
   document.body.appendChild(successForm);
 }
 
-function prepareErrorForm() {
+function createErrorForm() {
   errorForm = document.querySelector('#error')
     .content.querySelector('.error')
     .cloneNode(true);
   errorFormInner = errorForm.querySelector('.error__inner');
   errorFormButton = errorForm.querySelector('.error__button');
-  hideErrorForm();
   document.body.appendChild(errorForm);
 }
 
 function prepareImageUpload() {
   imageUploadEffectLevel.classList.add('hidden');
   imageUploadInput.addEventListener('change', imageUploadInputChangeHandler);
-  fileReader.onload = imageFileLoadHandler;
 }
 
 function prepareNoUiSlider() {
@@ -276,8 +292,6 @@ function prepareNoUiSlider() {
 function initializeValidator() {
   prepareHtmlForms();
   preparePristineValidationRules(pristine);
-  prepareSuccessForm();
-  prepareErrorForm();
   prepareImageUpload();
   prepareNoUiSlider();
 }

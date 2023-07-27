@@ -1,5 +1,5 @@
 import {COMMENT_LENGTH_MAX, HASHTAG_COUNT_MAX, HASHTAG_LENGTH_MAX} from './constants.js';
-import {effectLevelSliderElement, imageUploadFormTag, imageUploadFormText} from './domElements.js';
+import {effectLevelSliderElement, imageUploadFormTag, imageUploadFormText} from './dom-elements.js';
 import {splitTextWithSpace} from './utils.js';
 
 export const noUiSliderConfig = noUiSlider.create(effectLevelSliderElement, {
@@ -64,4 +64,3 @@ function preparePristineValidationRules(pristine) {
 }
 
 export {preparePristineValidationRules};
-

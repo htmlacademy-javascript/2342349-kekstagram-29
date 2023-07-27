@@ -10,7 +10,7 @@ import {
   loadCommentButton,
   socialCaption,
   templateComment
-} from './domElements.js';
+} from './dom-elements.js';
 
 let commentsLoader;
 
@@ -30,8 +30,7 @@ function createCommentsLoader(pictureData) {
     }
     commentIndex = newCommentRange;
     comments.appendChild(fragment);
-
-    commentsCount.textContent = `${commentIndex} из ${pictureData.comments.length} комментариев`;
+    commentsCount.innerHTML = `${commentIndex} из <span class="comments-count">${pictureData.comments.length}</span> комментариев`;
     toggleCommentsButton(pictureData.comments.length, commentIndex);
   };
 }
