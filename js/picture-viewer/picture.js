@@ -49,9 +49,9 @@ function sortByCommentDesc(pictureData) {
 
 function sortByRandom(pictureData, limit) {
   const array = pictureData.slice();
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  for (let imageIdA = array.length - 1; imageIdA > 0; imageIdA--) {
+    const imageIdB = Math.floor(Math.random() * (imageIdA + 1));
+    [array[imageIdA], array[imageIdB]] = [array[imageIdB], array[imageIdA]];
   }
   return array.slice(0, limit);
 }

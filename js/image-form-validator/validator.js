@@ -31,7 +31,7 @@ import {
   preparePristineValidationRules,
   pristineConfig
 } from './validator-rules.js';
-import {fetchData} from '../utils/http.js';
+import {fetchData} from '../api/api.js';
 import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
