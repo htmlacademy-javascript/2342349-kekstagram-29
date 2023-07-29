@@ -62,28 +62,43 @@ function deselectPictureFilter() {
   pictureFilterDiscussed.classList.remove('img-filters__button--active');
 }
 
+const debouncedUpdateByComment = debounce(() => {
+  updatePictureList(sortByCommentDesc(serverPictureData));
+}, PICTURE_SORT_FILTER_DELAY);
+
+const debouncedUpdateByDefault = debounce(() => {
+  updatePictureList(serverPictureData);
+}, PICTURE_SORT_FILTER_DELAY);
+
+const debouncedUpdateByRandom = debounce(() => {
+  updatePictureList(sortByRandom(serverPictureData, PICTURE_SORT_BY_RANDOM_LIMIT));
+}, PICTURE_SORT_FILTER_DELAY);
+
+function cancelAllDebounced() {
+  debouncedUpdateByComment.cancel();
+  debouncedUpdateByDefault.cancel();
+  debouncedUpdateByRandom.cancel();
+}
+
 function changePictureSortByComment() {
+  cancelAllDebounced();
   deselectPictureFilter();
   pictureFilterDiscussed.classList.add('img-filters__button--active');
-  debounce(() => {
-    updatePictureList(sortByCommentDesc(serverPictureData));
-  }, PICTURE_SORT_FILTER_DELAY)();
+  debouncedUpdateByComment();
 }
 
 function changePictureSortByDefault() {
+  cancelAllDebounced();
   deselectPictureFilter();
   pictureFilterDefault.classList.add('img-filters__button--active');
-  debounce(() => {
-    updatePictureList(serverPictureData);
-  }, PICTURE_SORT_FILTER_DELAY)();
+  debouncedUpdateByDefault();
 }
 
 function changePictureSortByRandom() {
+  cancelAllDebounced();
   deselectPictureFilter();
   pictureFilterRandom.classList.add('img-filters__button--active');
-  debounce(() => {
-    updatePictureList(sortByRandom(serverPictureData, PICTURE_SORT_BY_RANDOM_LIMIT));
-  }, PICTURE_SORT_FILTER_DELAY)();
+  debouncedUpdateByRandom();
 }
 
 function activateFilters() {
