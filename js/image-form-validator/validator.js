@@ -1,4 +1,6 @@
+import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
 import {
+  IMAGE_UPLOAD_FILE_TYPES,
   IMAGE_UPLOAD_TAG_REQUIRED,
   IMAGE_UPLOAD_TEXT_REQUIRED,
   NO_UI_SLIDER_RADIO_BUTTON_RESET,
@@ -8,7 +10,8 @@ import {
   SCALE_CONTROL_VALUE_STEP
 } from './constants.js';
 import {
-  bodyElement, effectLevelRadioButtonDefault,
+  bodyElement,
+  effectLevelRadioButtonDefault,
   effectLevelRadioButtons,
   effectLevelValueElement,
   effectsPreviewElements,
@@ -32,7 +35,7 @@ import {
   pristineConfig
 } from './validator-rules.js';
 import {fetchData} from '../api/api.js';
-import {IMAGE_UPLOAD_ENCTYPE, IMAGE_UPLOAD_METHOD, IMAGE_UPLOAD_URL} from '../constants/constants.js';
+import {showGlobalErrorForm} from '../errors/global-error-form.js';
 
 const pristine = new Pristine(imageUploadForm, pristineConfig, true);
 let scaleControlValueCurrent = SCALE_CONTROL_DEFAULT;
@@ -138,7 +141,13 @@ function closeFormEditImage() {
 
 function imageUploadInputChangeHandler() {
   if (imageUploadInput.files.length > 0) {
-    const url = URL.createObjectURL(imageUploadInput.files[0]);
+    const file = imageUploadInput.files[0];
+    if (!IMAGE_UPLOAD_FILE_TYPES.includes(file.type)) {
+      showGlobalErrorForm(`Unsupported file type. Please select one of ${IMAGE_UPLOAD_FILE_TYPES}`);
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
     imageUploadPreview.src = url;
     effectsPreviewElements.forEach((element) => {
       element.style.backgroundImage = `url("${url}")`;
@@ -235,6 +244,8 @@ function submitFormEditHandler(event) {
 }
 
 function prepareHtmlForms() {
+  imageUploadInput.accept = IMAGE_UPLOAD_FILE_TYPES
+    .map((type) => `.${type.split('/')[1]}`).join(', ');
   imageUploadForm.method = IMAGE_UPLOAD_METHOD;
   imageUploadForm.action = IMAGE_UPLOAD_URL;
   imageUploadForm.enctype = IMAGE_UPLOAD_ENCTYPE;
@@ -296,4 +307,4 @@ function initializeValidator() {
   prepareNoUiSlider();
 }
 
-export { initializeValidator};
+export {initializeValidator};
